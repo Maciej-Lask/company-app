@@ -3,9 +3,9 @@ const mongoose = require('mongoose');
 const expect = require('chai').expect;
 
 describe('Department', () => {
-  after(() => {
-    mongoose.models = {};
-  });
+  // after(() => {
+  //   mongoose.models = {};
+  // });
   // to powoduje błąd
   // it('should throw an error if no "name" arg', () => {
   //   const dep = new Department({});
