@@ -20,20 +20,40 @@ app.use((req, res) => {
   res.status(404).send({ message: 'Not found...' });
 });
 
-mongoose.connect('mongodb://0.0.0.0:27017/companyDB', {
-  useNewUrlParser: true,
-});
+// mongoose.connect('mongodb://0.0.0.0:27017/companyDB', {
+//   useNewUrlParser: true,
+// });
+// const db = mongoose.connection;
+
+
+const NODE_ENV = process.env.NODE_ENV;
+let dbUri = '';
+
+if (NODE_ENV === 'production') dbUri = 'url to remote db';
+else if (NODE_ENV === 'test') dbUri = 'mongodb://localhost:27017/companyDBtest';
+else dbUri = 'mongodb://localhost:27017/companyDB';
+
+mongoose.connect(dbUri, { useNewUrlParser: true, useUnifiedTopology: true });
 const db = mongoose.connection;
 
 db.once('open', () => {
-  console.log('Connected to the database');
+  // console.log('Connected to the database');
+  if (process.env.env === 'false') {
+    console.log('Connected to the database');
+  }
 });
-db.on('error', (err) => console.log('Error ' + err));
-
-app.listen('8000', () => {
-  console.log('Server is running on port: 8000');
+db.on('error', (err) => {
+  if (process.env.env === 'false') {
+    console.log('Error ' + err);
+  }
 });
 
+const server = app.listen('8000', () => {
+  if (process.env.env === 'false') {
+    console.log('Server is running on port: 8000');
+  }
+});
+module.exports = server;
 
 
 // To nawet nie działa, chyba kwestia wersji MongoDB
